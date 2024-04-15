@@ -1,9 +1,8 @@
 import React from "react";
+import Main from "./Main";
 
 function App() {
-  const Main = () => {
-    return <Main />;
-  };
+  return <Main title="리액트" />;
 }
 
 export default App;
