@@ -1,9 +1,9 @@
+import React from "react";
+
 function App() {
-  return (
-    <div>
-      <h1>리액트 베이직</h1>
-    </div>
-  );
+  const Main = () => {
+    return <Main />;
+  };
 }
 
 export default App;
