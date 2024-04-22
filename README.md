@@ -144,6 +144,8 @@ export default Home;
 
 ## 7.4 URL 파라미터와 쿼리스트링
 
+### 7.4.1 URL 파라미터
+
 - src/pages/Profile.js
 
 ```js
@@ -235,4 +237,514 @@ const Home = () => {
 };
 
 export default Home;
+```
+
+### 7.4.2 쿼리스트링
+
+- useLocation
+
+- useSearchParams Hook 사용하기
+
+-src/pages/About.js
+
+```js
+import React from "react";
+import { useSearchParams } from "react-router-dom";
+
+const About = () => {
+  // useSearchParams는 배열 타입의 값을 반환한다.
+
+  // const [쿼리파라미터를 조회/수정 하는 메서드들이 담긴 객체반환,
+  // 쿼리파라미터를 객체 형태로 업에티흐 할 수 있는 함수를 반환] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  // get() 메서드를 통해 특정 쿼리 파라미터를 조회 할 수 있다.
+  // set() 메서드를 통해 특정 쿼리 파라미터를 업데이트 할 수 있다.
+  const detail = searchParams.get("detail");
+  const mode = searchParams.get("mode");
+
+  // 쿼리파라미터를 조회 할 때 값은 무조건 문자열 타입
+  // 필요에 따라 "", 숫자는 parseInt() 해야됨
+  const onToggleDetail = () => {
+    setSearchParams({ mode: 1, detail: detail === "true" ? false : true });
+  };
+
+  const onIncreaseMode = () => {
+    const nextMode = mode === null ? 1 : parseInt(mode) + 1;
+    setSearchParams({ mode: nextMode, detail });
+  };
+
+  return (
+    <div>
+      <h1>소개페이지 입니다.</h1>
+      <p>리액트 라우터 사용</p>
+      <p>mode: {mode}</p>
+      <p>detail: {detail}</p>
+      <button onClick={onIncreaseMode}>mode</button>
+      <button onClick={onToggleDetail}>detail</button>
+    </div>
+  );
+};
+
+export default About;
+```
+
+## 7.5 중첩된 라우트
+
+- 중첩된 라우트를 사용하지 않을 때
+- src/pages/Articles.js
+
+```js
+import React from "react";
+import { Link } from "react-router-dom";
+
+const Articles = () => {
+  return (
+    <ul>
+      <li>
+        <Link to="/article/1">게시글 1</Link>
+      </li>
+      <li>
+        <Link to="/article/2">게시글 2</Link>
+      </li>
+      <li>
+        <Link to="/article/3">게시글 3</Link>
+      </li>
+    </ul>
+  );
+};
+
+export default Articles;
+```
+
+- src/App.js
+
+```js
+import { Route, Routes } from "react-router-dom";
+import About from "./pages/About";
+import Home from "./pages/Home";
+import Profile from "./pages/Profile";
+import Articles from "./pages/Articles";
+import Article from "./pages/Article";
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/profiles/:username" element={<Profile />} />
+      <Route path="/articles" element={<Articles />} />
+      <Route path="/article/:id" element={<Article />} />
+    </Routes>
+  );
+}
+export default App;
+```
+
+- src/Home.js
+
+```js
+import React from "react";
+import { Link } from "react-router-dom";
+
+const Home = () => {
+  return (
+    <div>
+      <h1>홈</h1>
+      <p>가장 먼저 보여지는 페이지 입니다.</p>
+      <ul>
+        <li>
+          <Link to="/about">소개 페이지</Link>
+        </li>
+        <li>
+          <Link to="/profiles/sonquan">sonquan의 프로필</Link>
+        </li>
+        <li>
+          <Link to="/profiles/Liubi">Liubi의 프로필</Link>
+        </li>
+        <li>
+          <Link to="/articles">게시글 목록</Link>
+        </li>
+      </ul>
+      {/* <Link to="/profiles/void">존재하지 않는 프로필</Link> */}
+    </div>
+  );
+};
+
+export default Home;
+```
+
+- 중첩된 라우트를 사용할 때
+- src/App.js
+
+```js
+import { Route, Routes } from "react-router-dom";
+import About from "./pages/About";
+import Home from "./pages/Home";
+import Profile from "./pages/Profile";
+import Articles from "./pages/Articles";
+import Article from "./pages/Article";
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/profiles/:username" element={<Profile />} />
+      <Route path="/articles" element={<Articles />}>
+        <Route path=":id" element={<Article />} />
+      </Route>
+    </Routes>
+  );
+}
+export default App;
+```
+
+### 7.5.1 공통 레이아웃 컴포넌트
+
+- 중첩된 라우트와 Outlet은 페이지끼리 공통적으로 보여줘야 하는 레이아웃이 있을 때도 유용하게 사용 가능
+
+- src/components/Layout.js
+
+```js
+import React from "react";
+import { Outlet } from "react-router-dom";
+
+const Layout = () => {
+  return (
+    <div>
+      <header
+        style={{
+          backgroundColor: "lightgray",
+          padding: "1rem",
+          fontSize: "24px",
+        }}
+      >
+        Header
+      </header>
+      <main>
+        <Outlet />
+      </main>
+    </div>
+  );
+};
+
+export default Layout;
+```
+
+- src/App.js
+
+```js
+import { Route, Routes } from "react-router-dom";
+import About from "./pages/About";
+import Home from "./pages/Home";
+import Profile from "./pages/Profile";
+import Articles from "./pages/Articles";
+import Article from "./pages/Article";
+import Layout from "./components/Layout";
+
+function App() {
+  return (
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/profiles/:username" element={<Profile />} />
+      </Route>
+
+      <Route path="/articles" element={<Articles />}>
+        <Route path=":id" element={<Article />} />
+      </Route>
+    </Routes>
+  );
+}
+export default App;
+```
+
+- src/pages/Articles.js
+
+```js
+import React from "react";
+import { Link, Outlet } from "react-router-dom";
+import Layout from "../components/Layout";
+
+const Articles = () => {
+  return (
+    <div>
+      <Layout>
+        <div>
+          <Outlet />
+        </div>
+      </Layout>
+      <ul>
+        <li>
+          <Link to="/articles/1">게시글 1</Link>
+        </li>
+        <li>
+          <Link to="/articles/2">게시글 2</Link>
+        </li>
+        <li>
+          <Link to="/articles/3">게시글 3</Link>
+        </li>
+      </ul>
+      <Outlet />
+    </div>
+  );
+};
+
+export default Articles;
+```
+
+### 7.5.2 index props
+
+- src/App.js
+
+## 7.6 리액트 라우터 부가 기능
+
+### 7.6.1 useNavigate
+
+- Link 컴포넌트를 사용하지 않고 다른 페이지로 이동해야 하는 상황에 사용하는 Hook
+- src/components/Layout.js
+
+```js
+import React from "react";
+import { Outlet } from "react-router-dom";
+
+const Layout = () => {
+  return (
+    <div>
+      <header
+        style={{
+          backgroundColor: "lightgray",
+          padding: "1rem",
+          fontSize: "24px",
+        }}
+      >
+        Header
+      </header>
+      <main>
+        <Outlet />
+      </main>
+    </div>
+  );
+};
+
+export default Layout;
+```
+
+- src/App.js
+
+```js
+import { Navigate, Route, Routes } from "react-router-dom";
+import About from "./pages/About";
+import Home from "./pages/Home";
+import Profile from "./pages/Profile";
+import Articles from "./pages/Articles";
+import Article from "./pages/Article";
+import Layout from "./components/Layout";
+
+function App() {
+  return (
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<Home />} />
+        {/* or <Route index element={<Home />} /> */}
+        <Route path="/about" element={<About />} />
+        <Route path="/profiles/:username" element={<Profile />} />
+      </Route>
+
+      <Route path="/articles" element={<Articles />}>
+        <Route index element={<Navigate replace to="1" />} />
+        <Route path=":id" element={<Article />} />
+      </Route>
+    </Routes>
+  );
+}
+export default App;
+```
+
+### 7.6.2 NavLink
+
+- 링크에서 사용하는 경로가 현재 라우트의 경로와 일치하는 경우
+- 특정 스타일 또는 CSS 클래스가 적용하는 컴포넌트이다.
+- 잘 쓰지는 않는다고 한다...
+- src/pages/Articles.js
+
+```js
+import React from "react";
+import { Link, NavLink, Outlet } from "react-router-dom";
+import Layout from "../components/Layout";
+
+const Articles = () => {
+  const activeStyle = {
+    color: "green",
+    fontSize: 21,
+  };
+
+  return (
+    <div>
+      <Layout>
+        <div>
+          <Outlet />
+        </div>
+      </Layout>
+      <ul>
+        <li>
+          <NavLink
+            to="/articles/1"
+            style={({ isActive }) => (isActive ? activeStyle : undefined)}
+          >
+            게시글 1
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/articles/2"
+            style={({ isActive }) => (isActive ? activeStyle : undefined)}
+          >
+            게시글 2
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/articles/3"
+            style={({ isActive }) => (isActive ? activeStyle : undefined)}
+          >
+            게시글 3
+          </NavLink>
+        </li>
+      </ul>
+    </div>
+  );
+};
+
+export default Articles;
+```
+
+- 리팩토링
+- src/pages/Articles.js
+
+```js
+const items = [
+  { id: 1, text: "게시글 1" },
+  { id: 2, text: "게시글 2" },
+  { id: 3, text: "게시글 3" },
+  { id: 4, text: "게시글 4" },
+  { id: 5, text: "게시글 5" },
+  { id: 6, text: "게시글 6" },
+];
+
+const Articles = () => {
+  const activeStyle = {
+    color: "green",
+    fontSize: 21,
+  };
+
+  return (
+    <div>
+      <Layout>
+        <div>
+          <Outlet />
+        </div>
+      </Layout>
+      <ul>
+        {items.map(item => (
+          <ArticleItem
+            key={item.id}
+            id={item.id}
+            text={item.text}
+          ></ArticleItem>
+        ))}
+      </ul>
+    </div>
+  );
+};
+```
+
+- src/pages/ArticleItem.js
+
+```js
+import React from "react";
+import { NavLink } from "react-router-dom";
+
+const ArticleItem = ({ id, text }) => {
+  const activeStyle = {
+    color: "green",
+    fontSize: "120",
+  };
+
+  return (
+    <li key={item.id}>
+      <NavLink
+        to={`/articles/${id}`}
+        style={({ isActive }) => (isActive ? activeStyle : undefined)}
+      >
+        {text}
+      </NavLink>
+    </li>
+  );
+};
+
+export default ArticleItem;
+```
+
+### 7.6.3 NotFound 페이지 만들기
+
+- src/pages/NotFound.js
+
+```js
+import React from "react";
+
+const NotFound = () => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alighItems: "center",
+        justifyContent: "center",
+        fontSize: 64,
+        position: "absolute",
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      404 error
+    </div>
+  );
+};
+
+export default NotFound;
+```
+
+- src/App.js
+
+```js
+import { Navigate, Route, Routes } from "react-router-dom";
+import About from "./pages/About";
+import Home from "./pages/Home";
+import Profile from "./pages/Profile";
+import Articles from "./pages/Articles";
+import Article from "./pages/Article";
+import Layout from "./components/Layout";
+import NotFound from "./pages/NotFound";
+
+function App() {
+  return (
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<Home />} />
+        {/* or <Route index element={<Home />} /> */}
+        <Route path="/about" element={<About />} />
+        <Route path="/profiles/:username" element={<Profile />} />
+      </Route>
+
+      <Route path="/articles" element={<Articles />}>
+        <Route index element={<Navigate replace to="1" />} />
+        <Route path=":id" element={<Article />} />
+      </Route>
+
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
+export default App;
 ```
