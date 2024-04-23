@@ -11,3 +11,4 @@ root.render(
     <App />
   </BrowserRouter>,
 );
+window.addEventListener("load", function () {});
