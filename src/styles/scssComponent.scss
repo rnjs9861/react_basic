@@ -5,7 +5,7 @@
   .box {
     background: red;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s ease-in;
 
     &.red {
       background: $red;

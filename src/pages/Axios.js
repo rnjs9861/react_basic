@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import { useState } from "react";
 
 const Axios = () => {
   const [data, setData] = useState(null);
@@ -22,13 +22,7 @@ const Axios = () => {
       <div>
         <button onClick={onClick}>불러오기</button>
       </div>
-      {data && (
-        <textarea
-          rows={7}
-          readOnly={true}
-          value={JSON.stringify(data, null, 2)}
-        />
-      )}
+      {data && <textarea rows={7} readOnly={true} value={JSON.stringify(data, null, 2)} />}
     </div>
   );
 };
