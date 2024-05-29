@@ -9,26 +9,26 @@ const MainPage = () => {
     <>
       <h1>Hooks study</h1>
 
-      <div>
+      {/* <div>
         <h2>useState</h2>
         <h3>예시: 카운터 앱</h3>
-        {/* <Counter /> */}
+        <Counter />
       </div>
       <div>
         <h2>useEffect</h2>
         <h3>예시: 카운터 앱</h3>
-        {/* <Counter /> */}
+        <Counter />
       </div>
       <div>
         <h2>useReducer</h2>
         <h3>예시: 리듀서 활용 카운터 앱</h3>
-        {/* {<CounterReducer />} */}
+        {<CounterReducer />}
       </div>
       <div>
         <h2>InputReducer</h2>
         <h3>예시: 리듀서 활용 카운터 앱</h3>
-        {/* {<InputReducer />} */}
-      </div>
+        {<InputReducer />}
+      </div> */}
       <div>
         <h2>InputRef</h2>
         <h3>예시: 평균값 계산</h3>
